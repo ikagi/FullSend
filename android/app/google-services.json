@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926133036758",
+    "project_id": "fullsend-a847b",
+    "storage_bucket": "fullsend-a847b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926133036758:android:4e39591f018370834e8b77",
+        "android_client_info": {
+          "package_name": "com.example.full_send"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOq4xni70w_zFuZ5sUUN79D19M3zQg0-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
