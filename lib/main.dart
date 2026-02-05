@@ -1,5 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:full_send/pages/login_screen.dart';
+import 'package:full_send/auth/auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           textStyle: TextStyle(color: CupertinoColors.white),
         ),
       ),
-      home: LoginScreen(),
+      home: const AuthPage()
     );
   }
 }

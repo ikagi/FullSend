@@ -5,21 +5,36 @@ import 'package:full_send/components/fs_login_button.dart';
 import 'package:full_send/components/fs_textfield.dart';
 import 'package:full_send/utils/show_error_dialog.dart';
 
-class LoginScreen extends StatefulWidget {
-  void Function()? onTap;
+class RegisterScreen extends StatefulWidget {
+  final void Function()? onTap;
 
-  LoginScreen({super.key, required this.onTap});
+  RegisterScreen({super.key, required this.onTap});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController usernameController = TextEditingController();
+
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
-  void login() async {
+  final TextEditingController confirmPwController = TextEditingController();
+
+  bool hasEmptyFields() {
+    final controllers = [
+      usernameController,
+      emailController,
+      passwordController,
+      confirmPwController,
+    ];
+
+    return controllers.any((c) => c.text.trim().isEmpty);
+  }
+
+  void registerUser() async {
     showCupertinoDialog(
       context: context,
       barrierDismissible: false,
@@ -29,16 +44,29 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
     );
+    if (hasEmptyFields()) {
+      Navigator.pop(context);
+      displayRegisterEmptyFields(context);
+      return;
+    }
+    if (passwordController.text != confirmPwController.text) {
+      //Closing dialog
+      Navigator.pop(context);
+      displayRegisterNoMatch(context);
+      return;
+    }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      if (context.mounted) Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
+      UserCredential? userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+
       Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
       displayError(e.code, context);
+      Navigator.pop(context);
     }
   }
 
@@ -85,6 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 32),
 
                         LoginScreenTextField(
+                          hintText: "Nazwa użytkownika",
+                          obscureText: false,
+                          controller: usernameController,
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        LoginScreenTextField(
                           hintText: "Email",
                           obscureText: false,
                           controller: emailController,
@@ -98,20 +134,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: passwordController,
                         ),
 
+                        const SizedBox(height: 16),
+
+                        LoginScreenTextField(
+                          hintText: "Potwierdź hasło",
+                          obscureText: true,
+                          controller: confirmPwController,
+                        ),
                         const SizedBox(height: 32),
 
-                        LoginScreenButton(text: "Zaloguj się", onTap: login),
-
-                        const SizedBox(height: 32),
-
-                        // TODO: Mechanika funkcji resetowania hasła
-
-                        Text(
-                          "Zapomniałeś hasła?",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: CupertinoColors.systemGrey.withOpacity(0.7),
-                          ),
+                        LoginScreenButton(
+                          text: "Zarejestruj się",
+                          onTap: registerUser,
                         ),
 
                         const SizedBox(height: 32),
@@ -120,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Nie masz konta? ",
+                              "Masz już konto? ",
                               style: TextStyle(
                                 fontSize: 15,
                                 color: CupertinoColors.systemGrey.withOpacity(
@@ -131,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             GestureDetector(
                               onTap: widget.onTap,
                               child: Text(
-                                "Zarejestruj się",
+                                "Zaloguj się",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: CupertinoColors.systemGrey.withOpacity(
