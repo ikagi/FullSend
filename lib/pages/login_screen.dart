@@ -7,7 +7,7 @@ import 'package:full_send/components/fs_textfield.dart';
 import 'package:full_send/utils/show_error_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
-  final void Function()? onTap; // Może być null, ale trzymamy dla kompatybilności
+  final void Function()? onTap;
 
   const LoginScreen({super.key, this.onTap});
 
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text,
       );
       if (context.mounted) {
-        Navigator.pop(context); // Zamknij loading dialog
+        Navigator.pop(context);
         context.go('/home');
       }
     } on FirebaseAuthException catch (e) {
@@ -99,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 32),
                         LoginScreenButton(text: "Zaloguj się", onTap: login),
                         const SizedBox(height: 32),
+                        // TODO zaimplementowac reset hasła
                         Text(
                           "Zapomniałeś hasła?",
                           style: TextStyle(
