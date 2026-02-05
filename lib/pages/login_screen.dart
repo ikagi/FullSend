@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:full_send/components/fs_login_button.dart';
 import 'package:full_send/components/fs_textfield.dart';
 import 'package:full_send/utils/show_error_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
-  void Function()? onTap;
+  final void Function()? onTap; // Może być null, ale trzymamy dla kompatybilności
 
-  LoginScreen({super.key, required this.onTap});
+  const LoginScreen({super.key, this.onTap});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
 
   void login() async {
@@ -35,10 +35,15 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
-      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context); // Zamknij loading dialog
+        context.go('/home');
+      }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      displayError(e.code, context);
+      if (context.mounted) {
+        Navigator.pop(context);
+        displayError(e.code, context);
+      }
     }
   }
 
@@ -55,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
             color: CupertinoColors.black.withOpacity(0.8),
             colorBlendMode: BlendMode.darken,
           ),
-
           LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -73,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: CupertinoColors.white,
                           ),
                         ),
-
                         Text(
                           "Drive together. Stay connected.",
                           style: TextStyle(
@@ -81,31 +84,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: CupertinoColors.systemGrey.withOpacity(0.7),
                           ),
                         ),
-
                         const SizedBox(height: 32),
-
                         LoginScreenTextField(
                           hintText: "Email",
                           obscureText: false,
                           controller: emailController,
                         ),
-
                         const SizedBox(height: 16),
-
                         LoginScreenTextField(
                           hintText: "Hasło",
                           obscureText: true,
                           controller: passwordController,
                         ),
-
                         const SizedBox(height: 32),
-
                         LoginScreenButton(text: "Zaloguj się", onTap: login),
-
                         const SizedBox(height: 32),
-
-                        // TODO: Mechanika funkcji resetowania hasła
-
                         Text(
                           "Zapomniałeś hasła?",
                           style: TextStyle(
@@ -113,9 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: CupertinoColors.systemGrey.withOpacity(0.7),
                           ),
                         ),
-
                         const SizedBox(height: 32),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -123,30 +114,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Nie masz konta? ",
                               style: TextStyle(
                                 fontSize: 15,
-                                color: CupertinoColors.systemGrey.withOpacity(
-                                  0.7,
-                                ),
+                                color: CupertinoColors.systemGrey.withOpacity(0.7),
                               ),
                             ),
                             GestureDetector(
-                              onTap: widget.onTap,
+                              onTap: () => context.go('/register'),
                               child: Text(
                                 "Zarejestruj się",
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: CupertinoColors.systemGrey.withOpacity(
-                                    0.7,
-                                  ),
+                                  color: CupertinoColors.systemGrey.withOpacity(0.7),
                                   fontWeight: FontWeight.w900,
                                 ),
                               ),
                             ),
                           ],
                         ),
-
-                        SizedBox(
-                          height: MediaQuery.of(context).viewInsets.bottom,
-                        ),
+                        SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
                       ],
                     ),
                   ),
@@ -157,5 +141,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }

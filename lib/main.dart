@@ -1,5 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:full_send/auth/auth.dart';
+import 'package:full_send/router/app_router.dart';
 import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,20 +12,19 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return CupertinoApp.router(
       title: 'FullSEND',
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(
         brightness: Brightness.dark,
-        textTheme: new CupertinoTextThemeData(
+        textTheme: CupertinoTextThemeData(
           primaryColor: CupertinoColors.white,
-          textStyle: TextStyle(color: CupertinoColors.white),
+          textStyle: const TextStyle(color: CupertinoColors.white),
         ),
       ),
-      home: const AuthPage()
+      routerConfig: appRouter,
     );
   }
 }
